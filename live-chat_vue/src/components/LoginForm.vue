@@ -56,7 +56,7 @@ export default {
           throw new Error('メールアドレスかパスワードが違います');
         }
         if (!this.error) {
-          console.log({ res });
+          console.log(res.headers);
           setItem(res.headers, res.data.data.name);
 
           this.$emit('redirectToChatRoom');

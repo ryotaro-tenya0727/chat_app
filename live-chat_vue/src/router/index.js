@@ -4,7 +4,7 @@ import Chatroom from '../views/Chatroom';
 
 import useValidate from '../auth/validate';
 
-const { validate } = useValidate();
+const { error, validate } = useValidate();
 
 const requireAuth = async (to, from, next) => {
   const uid = window.localStorage.getItem('uid');
@@ -19,10 +19,31 @@ const requireAuth = async (to, from, next) => {
 
   await validate();
 
-  next();
-  console.log('requireAuthが呼ばれています！');
+  if (error.value) {
+    console.log('認証に失敗しました');
+    next({ name: 'Welcome' });
+  } else {
+    next();
+  }
+};
 
-  next();
+const noRequireAuth = async (to, from, next) => {
+  const uid = window.localStorage.getItem('uid');
+  const client = window.localStorage.getItem('client');
+  const accessToken = window.localStorage.getItem('access-token');
+
+  if (!uid && !client && !accessToken) {
+    next();
+    return;
+  }
+
+  await validate();
+
+  if (!error.value) {
+    next({ name: 'Chatroom' });
+  } else {
+    next();
+  }
 };
 
 const routes = [
@@ -30,6 +51,7 @@ const routes = [
     path: '/',
     name: 'Welcome',
     component: Welcome,
+    beforeEnter: noRequireAuth,
   },
   {
     path: '/chatroom',

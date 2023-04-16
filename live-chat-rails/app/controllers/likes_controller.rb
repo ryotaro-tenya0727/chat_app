@@ -15,9 +15,9 @@ class LikesController < ApplicationController
     like = Like.find(params[:id])
 
     if like.destroy
-      render json: { id: like.id, email: like.user.uid, message: '削除に成功しました' }, status: :ok
+      render json: { id: like.id, email: like.user.uid, message: '削除に成功しました' }, status: 200
     else
-      render json: { message: '削除できませんでした', errors: like.errors.messages }, status: :bad_request
+      render json: { message: '削除できませんでした', errors: like.errors.messages }, status: 400
     end
   end
 end
